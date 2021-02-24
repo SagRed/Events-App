@@ -1,15 +1,13 @@
 import React from "react";
-import Events from "./Events";
+import Events from "./Events/Events";
 import Header from "./Header";
 
-
-function Home() {
-
+function Home({ isUserAdmin }) {
   return (
     <div>
       <Header />
       <div style={{ marginTop: "80px" }}>
-        <Events />
+        <Events isUserAdmin={isUserAdmin} />
       </div>
     </div>
   );

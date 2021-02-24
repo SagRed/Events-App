@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import Modal from "@material-ui/core/Modal";
+import React, { useState} from "react";
 import { TextField, Button } from "@material-ui/core";
-import { db, firebase, auth } from "./firebase";
+import { db, firebase } from "../../config/firebase";
 import { v4 as uuidv4 } from "uuid";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
 
-function NewEvent({ modalState, setModalState, modalClose }) {
+function NewEvent() {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [high, setHigh] = useState("");
@@ -37,95 +38,87 @@ function NewEvent({ modalState, setModalState, modalClose }) {
     await setPrize("");
     await setUrl("");
     setTime("");
-    setModalState(false);
+  };
+
+  const theme = createMuiTheme({
+    palette: {
+      type: "dark",
+    },
+  });
+
+  const textfieldStyle = {
+    margin: "20px",
   };
 
   return (
-    <Modal
-      open={modalState}
-      onClose={modalClose}
-      aria-labelledby="simple-modal-title"
-      aria-describedby="simple-modal-description"
+    <div
       style={{
         margin: "0 auto",
         width: "600px",
         maxWidth: "600px",
         textAlign: "center",
-        backgroundColor: "#161920ef",
-        overflow: "scroll",
-        overflowX: "hidden",
       }}
     >
-      <div>
-        <h2 style={{ fontWeight: "400", color: "#cfcfcf" }}>New Event</h2>
-        <form noValidate>
+      <h2 style={{ fontWeight: "400", color: "#cfcfcf" }}>Create Event</h2>
+      <ThemeProvider theme={theme}>
+        <form>
           <TextField
+            className="textfield"
             required
+            fullWidth
             label="Event Name"
             variant="filled"
+            value={name}
             onChange={(e) => setName(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <TextField
+            fullWidth
             required
             label="Description"
             variant="filled"
+            value={desc}
             onChange={(e) => setDesc(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <TextField
+            fullWidth
             required
             label="Highlight"
             variant="filled"
+            value={high}
             onChange={(e) => setHigh(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <TextField
+            fullWidth
             required
             label="Organized By"
             variant="filled"
+            value={by}
             onChange={(e) => setBy(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <TextField
+            fullWidth
             required
             label="Entry"
             variant="filled"
+            value={entry}
             onChange={(e) => setEntry(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <TextField
+            fullWidth
             required
             label="Price Money"
             variant="filled"
+            value={prize}
             onChange={(e) => setPrize(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <TextField
+            fullWidth
             required
             label="Deadline"
             variant="filled"
@@ -133,40 +126,33 @@ function NewEvent({ modalState, setModalState, modalClose }) {
             InputLabelProps={{
               shrink: true,
             }}
+            value={time}
             onChange={(e) => setTime(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <TextField
+            fullWidth
             required
             label="Poster URL"
             variant="filled"
+            value={url}
             onChange={(e) => setUrl(e.target.value)}
-            style={{
-              backgroundColor: "#d4d3d3",
-              width: "400px",
-              margin: "10px",
-            }}
+            style={textfieldStyle}
           />
           <Button
+            fullWidth
             style={{
-              width: "400px",
-              backgroundColor: "#d4d3d3",
-              color: "black",
-              borderRadius: "2px",
-              margin: "10px",
+              color: "white",
+              backgroundColor: "#161616",
+              margin: "20px",
             }}
             onClick={addEventToDB}
           >
             Submit
           </Button>
         </form>
-      </div>
-    </Modal>
+      </ThemeProvider>
+    </div>
   );
 }
-
 export default NewEvent;

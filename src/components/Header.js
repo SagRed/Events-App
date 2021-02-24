@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import { Button, IconButton, Avatar } from "@material-ui/core";
-import { db, firebase, auth } from "./firebase";
-import NewEvent from "./NewEvent";
+import { db, firebase, auth } from "../config/firebase";
 import logo from "./logo.png";
+import { Link } from "react-router-dom";
 
 function Header() {
   const [isLoggedIn, setIsloggedIn] = useState(false);
   const [LoggedInuser, setLoggedInUser] = useState("");
-  const [modalState, setModalState] = useState(false);
-  const [admin, setAdmin] = useState(false);
-
-  const [addAdminModal, setAddAdminModal] = useState(false);
+  const [isAdmin, setIsadmin] = useState(false);
 
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
+        console.log(user);
         await setLoggedInUser(user);
         await setIsloggedIn(true);
         db.collection("admin").onSnapshot((snap) => {
           const data = snap.docs.map((s) => s.data());
           data.map((e) => {
             if (user.email === e.email) {
-              setAdmin(true);
+              setIsadmin(true);
             }
           });
         });
@@ -54,14 +52,6 @@ function Header() {
     await setLoggedInUser(null);
   };
 
-  const modalOpen = async () => {
-    await setModalState(true);
-  };
-
-  const modalClose = async () => {
-    await setModalState(false);
-  };
-
   if (isLoggedIn === true) {
     return (
       <AppBar
@@ -79,28 +69,43 @@ function Header() {
         >
           <div style={{ display: "flex" }}>
             <img src={logo} style={{ width: "38px", marginRight: "10px" }} />
-            <span style={{ fontSize: "24px", fontWeight: "300" }}>
+            <span
+              style={{
+                fontSize: "24px",
+                fontWeight: "500",
+                color: "teal",
+                justifyContent: "center",
+              }}
+            >
               BMSCE Events
             </span>
           </div>
           <div style={{ marginLeft: "auto" }}>
             {LoggedInuser !== null ? (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {admin ? (
-                  <IconButton onClick={modalOpen}>
-                    <span
-                      style={{
-                        marginRight: "1px",
-                        marginLeft: "10px",
-                        color: "white",
-                        fontSize: "38px",
-                        color: "#d1d1d1",
-                        fontWeight: "400",
-                      }}
-                    >
-                      +
-                    </span>
-                  </IconButton>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {isAdmin ? (
+                  <Link to="/create-event">
+                    <IconButton>
+                      <span
+                        style={{
+                          marginRight: "1px",
+                          marginLeft: "10px",
+                          color: "white",
+                          fontSize: "38px",
+                          color: "#d1d1d1",
+                          fontWeight: "400",
+                        }}
+                      >
+                        +
+                      </span>
+                    </IconButton>
+                  </Link>
                 ) : null}
                 <span
                   style={{
@@ -118,11 +123,6 @@ function Header() {
                   sizes="small"
                   src={LoggedInuser.photoURL}
                   style={{ marginRight: "10px" }}
-                />
-                <NewEvent
-                  modalState={modalState}
-                  setModalState={setModalState}
-                  modalClose={modalClose}
                 />
 
                 <Button
@@ -173,8 +173,9 @@ function Header() {
             alignItems: "center",
           }}
         >
-          <div>
-            <span style={{ fontSize: "24px", fontWeight: "300" }}>
+          <div style={{ display: "flex" }}>
+            <img src={logo} style={{ width: "38px", marginRight: "10px" }} />
+            <span style={{ fontSize: "24px", fontWeight: "500" }}>
               BMSCE Events
             </span>
           </div>

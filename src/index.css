@@ -12,3 +12,22 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.textfield {
+  color: aliceblue !important;
+}
+.modalBack {
+  background: rgba(31, 31, 31, 0.35);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 10px;
+  margin: 0 auto;
+  width: 600px;
+  max-width: 600px;
+  text-align: center;
+  overflow: scroll;
+  overflow-x: hidden;
+  height: 100vh;
+  color: #161616;
+}
