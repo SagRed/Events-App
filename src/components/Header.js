@@ -1,35 +1,26 @@
 import React, { useState, useEffect } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import { Button, IconButton, Avatar } from "@material-ui/core";
-import { db, firebase, auth } from "../config/firebase";
+import { firebase, auth } from "../config/firebase";
 import logo from "./logo.png";
 import { Link } from "react-router-dom";
+import { UseUserStore } from "./UseUserStore";
 
 function Header() {
+  const currentUser = UseUserStore((state) => state.user);
+
   const [isLoggedIn, setIsloggedIn] = useState(false);
   const [LoggedInuser, setLoggedInUser] = useState("");
-  const [isAdmin, setIsadmin] = useState(false);
-
+  // const [isAdmin, setIsadmin] = useState(false);
   useEffect(() => {
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        console.log(user);
-        await setLoggedInUser(user);
-        await setIsloggedIn(true);
-        db.collection("admin").onSnapshot((snap) => {
-          const data = snap.docs.map((s) => s.data());
-          data.map((e) => {
-            if (user.email === e.email) {
-              setIsadmin(true);
-            }
-          });
-        });
-      } else {
-        setLoggedInUser(null);
-        setIsloggedIn(false);
-      }
-    });
-  }, [auth]);
+    if (currentUser) {
+      setLoggedInUser(currentUser);
+      setIsloggedIn(true);
+    } else {
+      setLoggedInUser(null);
+      setIsloggedIn(false);
+    }
+  }, [currentUser]);
 
   const logIn = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -48,6 +39,7 @@ function Header() {
 
   const logOut = async () => {
     await auth.signOut();
+    UseUserStore.setState({ user: null });
     await setIsloggedIn(false);
     await setLoggedInUser(null);
   };
@@ -89,24 +81,23 @@ function Header() {
                   justifyContent: "center",
                 }}
               >
-                {isAdmin ? (
-                  <Link to="/create-event">
-                    <IconButton>
-                      <span
-                        style={{
-                          marginRight: "1px",
-                          marginLeft: "10px",
-                          color: "white",
-                          fontSize: "38px",
-                          color: "#d1d1d1",
-                          fontWeight: "400",
-                        }}
-                      >
-                        +
-                      </span>
-                    </IconButton>
-                  </Link>
-                ) : null}
+                <Link to="/create-event">
+                  <IconButton>
+                    <span
+                      style={{
+                        marginRight: "1px",
+                        marginLeft: "10px",
+                        color: "white",
+                        fontSize: "38px",
+                        color: "#d1d1d1",
+                        fontWeight: "400",
+                      }}
+                    >
+                      +
+                    </span>
+                  </IconButton>
+                </Link>
+
                 <span
                   style={{
                     fontWeight: "600",

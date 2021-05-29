@@ -1,11 +1,17 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { TextField, Button } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 import { db, firebase } from "../../config/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
+import { UseUserStore } from "../UseUserStore";
 
 function NewEvent() {
+  let history = useHistory();
+
+  const currentUser = UseUserStore((state) => state.user);
+
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [high, setHigh] = useState("");
@@ -19,6 +25,7 @@ function NewEvent() {
     const id = uuidv4();
     const timeToNum = new Date(time).getTime();
     await db.collection("events").doc(id).set({
+      createdBy: currentUser.email,
       id: id,
       name: name,
       decs: desc,
@@ -37,7 +44,8 @@ function NewEvent() {
     await setEntry("");
     await setPrize("");
     await setUrl("");
-    setTime("");
+    await setTime("");
+    await history.push("/");
   };
 
   const theme = createMuiTheme({

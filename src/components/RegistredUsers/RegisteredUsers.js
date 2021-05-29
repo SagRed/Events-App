@@ -17,10 +17,12 @@ function RegisteredUsers({ eid }) {
 
   useEffect(() => {
     const getData = async () => {
-      const getEvent = await db.collection("events").doc(eid).get();
-      const anEvent = await getEvent.data();
-      console.log(anEvent);
-      await setEvent(anEvent);
+      await db
+        .collection("events")
+        .doc(eid)
+        .onSnapshot(async (snap) => {
+          await setEvent(snap.data());
+        });
     };
     getData();
   }, []);

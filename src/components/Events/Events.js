@@ -10,8 +10,11 @@ import { Link } from "react-router-dom";
 import DeleteOutlineTwoToneIcon from "@material-ui/icons/DeleteOutlineTwoTone";
 import PeopleTwoToneIcon from "@material-ui/icons/PeopleTwoTone";
 import Badge from "@material-ui/core/Badge";
+import { UseUserStore } from "../UseUserStore";
 
-function Events({ isUserAdmin }) {
+function Events() {
+  const currentUser = UseUserStore((state) => state.user);
+
   const [events, setEvents] = useState(null);
   const [user, setUser] = useState(null);
   const [reg, setReg] = useState(false);
@@ -50,7 +53,7 @@ function Events({ isUserAdmin }) {
   useEffect(() => {
     setTimeout(() => {
       setAnimation(false);
-    }, 3000);
+    }, 6000);
   }, [animation]);
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -129,7 +132,7 @@ function Events({ isUserAdmin }) {
       {animation ? <CongoAnimation /> : null}
       {events
         ? events.map((event, indx) => {
-            const TotalRegisterdUsers = event.registered.length;
+            const TotalRegisterdUsers = event.registered?.length;
             const pdeadline = new Date(event.deadline).toISOString();
             return (
               <div className="App_body" key={indx}>
@@ -145,48 +148,51 @@ function Events({ isUserAdmin }) {
                   }}
                 >
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    {isUserAdmin ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <div>
-                          <Link to={`/registered-users/${event.id}`}>
-                            <IconButton>
-                              <Badge
-                                badgeContent={TotalRegisterdUsers}
-                                color="secondary"
-                              >
-                                <PeopleTwoToneIcon
+                    {event.createdBy === currentUser?.email &&
+                      currentUser !== null && (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                          }}
+                        >
+                          <div>
+                            {TotalRegisterdUsers > 0 && (
+                              <Link to={`/registered-users/${event.id}`}>
+                                <IconButton>
+                                  <Badge
+                                    badgeContent={TotalRegisterdUsers}
+                                    color="secondary"
+                                  >
+                                    <PeopleTwoToneIcon
+                                      fontSize="small"
+                                      style={{ color: "white" }}
+                                    />
+                                  </Badge>
+                                </IconButton>
+                              </Link>
+                            )}
+                          </div>
+                          <div>
+                            <Link
+                              to={`/edit-event?name=${event.name}&desc=${event.decs}&high=${event.high}&by=${event.by}&entry=${event.entry}&prize=${event.prize}&deadline=${pdeadline}&url=${event.url}&id=${event.id}`}
+                            >
+                              <IconButton>
+                                <EditTwoToneIcon
                                   fontSize="small"
                                   style={{ color: "white" }}
                                 />
-                              </Badge>
-                            </IconButton>
-                          </Link>
-                        </div>
-                        <div>
-                          <Link
-                            to={`/edit-event?name=${event.name}&desc=${event.decs}&high=${event.high}&by=${event.by}&entry=${event.entry}&prize=${event.prize}&deadline=${pdeadline}&url=${event.url}&id=${event.id}`}
-                          >
-                            <IconButton>
-                              <EditTwoToneIcon
+                              </IconButton>
+                            </Link>
+                            <IconButton onClick={() => deleteEvent(event.id)}>
+                              <DeleteOutlineTwoToneIcon
                                 fontSize="small"
                                 style={{ color: "white" }}
                               />
                             </IconButton>
-                          </Link>
-                          <IconButton onClick={() => deleteEvent(event.id)}>
-                            <DeleteOutlineTwoToneIcon
-                              fontSize="small"
-                              style={{ color: "white" }}
-                            />
-                          </IconButton>
+                          </div>
                         </div>
-                      </div>
-                    ) : null}
+                      )}
                     <div style={{ display: "flex" }}>
                       <img src={event.url} style={{ width: "150px" }} />
                       <div style={{ marginLeft: "20px" }}>

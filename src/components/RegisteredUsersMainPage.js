@@ -5,7 +5,7 @@ import RegisteredUsers from "./RegistredUsers/RegisteredUsers";
 
 function RegisteredUsersMainPage() {
   let { id } = useParams();
-  console.log(id);
+
   return (
     <div>
       <Header />
